@@ -374,9 +374,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 708e12007beb50c4986c9540e231f861, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  defaultFadeDuration: 1
-  firstLaunchFadeDuration: 3
-  firstLaunchKey: IsFirstLaunch
+  fadeDuration: 1
   transitionSound: {fileID: 8300000, guid: 298e6a837f8546e449000b91ded2a67f, type: 3}
   fadeCanvas: {fileID: 1834868488}
   fadeImage: {fileID: 1472822361}
@@ -596,9 +594,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 708e12007beb50c4986c9540e231f861, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  defaultFadeDuration: 1
-  firstLaunchFadeDuration: 3
-  firstLaunchKey: IsFirstLaunch
+  fadeDuration: 1
   transitionSound: {fileID: 8300000, guid: 95f83ab2ae07cf5489283af87b566e3b, type: 3}
   fadeCanvas: {fileID: 1834868488}
   fadeImage: {fileID: 1472822361}
@@ -1011,9 +1007,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 708e12007beb50c4986c9540e231f861, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  defaultFadeDuration: 1
-  firstLaunchFadeDuration: 3
-  firstLaunchKey: IsFirstLaunch
+  fadeDuration: 1
   transitionSound: {fileID: 8300000, guid: 95f83ab2ae07cf5489283af87b566e3b, type: 3}
   fadeCanvas: {fileID: 1834868488}
   fadeImage: {fileID: 1472822361}
@@ -2056,9 +2050,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 708e12007beb50c4986c9540e231f861, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  defaultFadeDuration: 1
-  firstLaunchFadeDuration: 3
-  firstLaunchKey: IsFirstLaunch
+  fadeDuration: 1
   transitionSound: {fileID: 8300000, guid: ae3e13dc9865092439c850571bc139cb, type: 3}
   fadeCanvas: {fileID: 1834868488}
   fadeImage: {fileID: 1472822361}
@@ -2116,6 +2108,50 @@ PrefabInstance:
       propertyPath: m_Name
       value: AudioManager
       objectReference: {fileID: 0}
+    - target: {fileID: 6863290240369350480, guid: 865a4a26131a7e74a939ed166d54667e, type: 3}
+      propertyPath: sfxGroup
+      value: 
+      objectReference: {fileID: 1392170604887862967, guid: df97f9712ec8cc54096c27ded5ad17a8, type: 2}
+    - target: {fileID: 6863290240369350480, guid: 865a4a26131a7e74a939ed166d54667e, type: 3}
+      propertyPath: musicGroup
+      value: 
+      objectReference: {fileID: -9156315962514466729, guid: df97f9712ec8cc54096c27ded5ad17a8, type: 2}
+    - target: {fileID: 6863290240369350480, guid: 865a4a26131a7e74a939ed166d54667e, type: 3}
+      propertyPath: masterGroup
+      value: 
+      objectReference: {fileID: 24300002, guid: df97f9712ec8cc54096c27ded5ad17a8, type: 2}
+    - target: {fileID: 6863290240369350480, guid: 865a4a26131a7e74a939ed166d54667e, type: 3}
+      propertyPath: gameSfxGroup
+      value: 
+      objectReference: {fileID: -1232766972754809606, guid: df97f9712ec8cc54096c27ded5ad17a8, type: 2}
+    - target: {fileID: 6863290240369350480, guid: 865a4a26131a7e74a939ed166d54667e, type: 3}
+      propertyPath: menuSfxGroup
+      value: 
+      objectReference: {fileID: -4435981452658132925, guid: df97f9712ec8cc54096c27ded5ad17a8, type: 2}
+    - target: {fileID: 6863290240369350480, guid: 865a4a26131a7e74a939ed166d54667e, type: 3}
+      propertyPath: sfxMixerGroup
+      value: 
+      objectReference: {fileID: 1392170604887862967, guid: df97f9712ec8cc54096c27ded5ad17a8, type: 2}
+    - target: {fileID: 6863290240369350480, guid: 865a4a26131a7e74a939ed166d54667e, type: 3}
+      propertyPath: metronomeGroup
+      value: 
+      objectReference: {fileID: 6311690234636236175, guid: df97f9712ec8cc54096c27ded5ad17a8, type: 2}
+    - target: {fileID: 6863290240369350480, guid: 865a4a26131a7e74a939ed166d54667e, type: 3}
+      propertyPath: localMusicGroup
+      value: 
+      objectReference: {fileID: 6780960623938654944, guid: df97f9712ec8cc54096c27ded5ad17a8, type: 2}
+    - target: {fileID: 6863290240369350480, guid: 865a4a26131a7e74a939ed166d54667e, type: 3}
+      propertyPath: musicMixerGroup
+      value: 
+      objectReference: {fileID: -9156315962514466729, guid: df97f9712ec8cc54096c27ded5ad17a8, type: 2}
+    - target: {fileID: 6863290240369350480, guid: 865a4a26131a7e74a939ed166d54667e, type: 3}
+      propertyPath: globalMusicGroup
+      value: 
+      objectReference: {fileID: -7258061366688303732, guid: df97f9712ec8cc54096c27ded5ad17a8, type: 2}
+    - target: {fileID: 6863290240369350480, guid: 865a4a26131a7e74a939ed166d54667e, type: 3}
+      propertyPath: menuSfxMixerGroup
+      value: 
+      objectReference: {fileID: -4435981452658132925, guid: df97f9712ec8cc54096c27ded5ad17a8, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []

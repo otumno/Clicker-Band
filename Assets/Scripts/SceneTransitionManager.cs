@@ -1,22 +1,15 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+using System.Collections; // Добавлено для IEnumerator
 
 public class SceneTransitionManager : MonoBehaviour
 {
-    public enum TransitionAction
-    {
-        LoadScene,
-        ExitGame
-    }
-
-    [Header("Fade Settings")]
-    [SerializeField] private float defaultFadeDuration = 1f;
-    [SerializeField] private float firstLaunchFadeDuration = 3f;
-    [SerializeField] private string firstLaunchKey = "IsFirstLaunch";
+    public enum TransitionAction { LoadScene, ExitGame }
 
     [Header("Transition Settings")]
-    public AudioClip transitionSound;
+    [SerializeField] private float fadeDuration = 1f;
+    [SerializeField] private AudioClip transitionSound;
     [SerializeField] private Canvas fadeCanvas;
     [SerializeField] private Image fadeImage;
     [SerializeField] private TransitionAction action;
@@ -24,31 +17,17 @@ public class SceneTransitionManager : MonoBehaviour
 
     private void Start()
     {
-        if (fadeCanvas == null || fadeImage == null)
-        {
-            Debug.LogError("FadeCanvas или FadeImage не установлены!");
-            return;
-        }
-
+        if (fadeCanvas == null || fadeImage == null) return;
         fadeCanvas.gameObject.SetActive(true);
-
-        float currentFadeDuration = IsFirstLaunch() ? firstLaunchFadeDuration : defaultFadeDuration;
-        if (IsFirstLaunch()) MarkAsLaunched();
-
-        StartCoroutine(FadeIn(currentFadeDuration));
+        StartCoroutine(FadeIn());
     }
-
-    private bool IsFirstLaunch() => !PlayerPrefs.HasKey(firstLaunchKey);
-    private void MarkAsLaunched() => PlayerPrefs.SetInt(firstLaunchKey, 1);
 
     public void OnButtonClick() => StartCoroutine(Transition());
 
-    private System.Collections.IEnumerator Transition()
+    private IEnumerator Transition()
     {
-        // Проигрываем звук через AudioManager с категорией MenuSFX
-        AudioManager.Instance.PlaySFX(transitionSound, 1f, AudioCategory.MenuSFX);
+        AudioManager.Instance?.PlaySFX(transitionSound, 1f, AudioCategory.MenuSFX);
         
-        // Запускаем затенение одновременно со звуком
         yield return StartCoroutine(FadeOut());
 
         if (action == TransitionAction.LoadScene)
@@ -64,33 +43,31 @@ public class SceneTransitionManager : MonoBehaviour
         }
     }
 
-    private System.Collections.IEnumerator FadeOut()
+    private IEnumerator FadeOut()
     {
         float elapsedTime = 0f;
         Color color = fadeImage.color;
         fadeCanvas.gameObject.SetActive(true);
 
-        while (elapsedTime < defaultFadeDuration)
+        while (elapsedTime < fadeDuration)
         {
-            elapsedTime += Time.deltaTime;
-            color.a = Mathf.Clamp01(elapsedTime / defaultFadeDuration);
+            color.a = Mathf.Clamp01(elapsedTime / fadeDuration);
             fadeImage.color = color;
+            elapsedTime += Time.deltaTime;
             yield return null;
         }
-        color.a = 1;
-        fadeImage.color = color;
     }
 
-    private System.Collections.IEnumerator FadeIn(float duration)
+    private IEnumerator FadeIn()
     {
         float elapsedTime = 0f;
         Color color = fadeImage.color;
 
-        while (elapsedTime < duration)
+        while (elapsedTime < fadeDuration)
         {
-            elapsedTime += Time.deltaTime;
-            color.a = 1 - Mathf.Clamp01(elapsedTime / duration);
+            color.a = 1 - Mathf.Clamp01(elapsedTime / fadeDuration);
             fadeImage.color = color;
+            elapsedTime += Time.deltaTime;
             yield return null;
         }
         fadeCanvas.gameObject.SetActive(false);

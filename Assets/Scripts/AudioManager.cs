@@ -12,9 +12,14 @@ public class AudioManager : MonoBehaviour
 
     [Header("Mixer Groups")]
     [SerializeField] private AudioMixer mainMixer;
-    [SerializeField] private AudioMixerGroup musicMixerGroup;
-    [SerializeField] private AudioMixerGroup sfxMixerGroup;
-    [SerializeField] private AudioMixerGroup menuSfxMixerGroup;
+    [SerializeField] private AudioMixerGroup masterGroup;
+    [SerializeField] private AudioMixerGroup musicGroup;
+    [SerializeField] private AudioMixerGroup globalMusicGroup;
+    [SerializeField] private AudioMixerGroup localMusicGroup;
+    [SerializeField] private AudioMixerGroup sfxGroup;
+    [SerializeField] private AudioMixerGroup menuSfxGroup;
+    [SerializeField] private AudioMixerGroup gameSfxGroup;
+    [SerializeField] private AudioMixerGroup metronomeGroup;
 
     private float defaultGlobalVolume;
     private Coroutine currentGlobalFade;
@@ -35,8 +40,8 @@ public class AudioManager : MonoBehaviour
         localMusicSource.volume = 0f;
         localMusicSource.playOnAwake = false;
         
-        globalMusicSource.outputAudioMixerGroup = musicMixerGroup;
-        localMusicSource.outputAudioMixerGroup = musicMixerGroup;
+        globalMusicSource.outputAudioMixerGroup = globalMusicGroup;
+        localMusicSource.outputAudioMixerGroup = localMusicGroup;
     }
 
     #region Volume Control
@@ -44,6 +49,8 @@ public class AudioManager : MonoBehaviour
     {
         SetMixerVolume("MasterVol", settings.masterVolume);
         SetMixerVolume("MusicVol", settings.musicVolume);
+        SetMixerVolume("GlobalMusicVol", settings.musicVolume);
+        SetMixerVolume("LocalMusicVol", settings.musicVolume);
         SetMixerVolume("SFXVol", settings.sfxVolume);
         SetMixerVolume("MenuSFXVol", settings.menuSFXVolume);
         SetMixerVolume("GameSFXVol", settings.gameSFXVolume);
@@ -52,6 +59,7 @@ public class AudioManager : MonoBehaviour
 
     public void SetMixerVolume(string parameter, float volume)
     {
+        if (mainMixer == null) return;
         float dB = volume > 0.0001f ? 20f * Mathf.Log10(volume) : -80f;
         mainMixer.SetFloat(parameter, dB);
     }
@@ -77,10 +85,7 @@ public class AudioManager : MonoBehaviour
     {
         if (fadeTime > 0f)
         {
-            if (currentGlobalFade != null)
-            {
-                StopCoroutine(currentGlobalFade);
-            }
+            if (currentGlobalFade != null) StopCoroutine(currentGlobalFade);
             currentGlobalFade = StartCoroutine(FadeGlobalMusic(volume, fadeTime));
         }
         else
@@ -116,10 +121,7 @@ public class AudioManager : MonoBehaviour
     {
         if (clip == null) return;
 
-        if (currentLocalFade != null)
-        {
-            StopCoroutine(currentLocalFade);
-        }
+        if (currentLocalFade != null) StopCoroutine(currentLocalFade);
 
         localMusicSource.clip = clip;
         localMusicSource.volume = fadeIn ? 0f : volume;
@@ -136,10 +138,7 @@ public class AudioManager : MonoBehaviour
     {
         if (fadeOut)
         {
-            if (currentLocalFade != null)
-            {
-                StopCoroutine(currentLocalFade);
-            }
+            if (currentLocalFade != null) StopCoroutine(currentLocalFade);
             currentLocalFade = StartCoroutine(FadeLocalMusic(0f, 1f, true));
         }
         else
@@ -182,9 +181,6 @@ public class AudioManager : MonoBehaviour
         audioSource.clip = clip;
         audioSource.volume = volume;
         audioSource.outputAudioMixerGroup = GetMixerGroup(category);
-        audioSource.playOnAwake = false;
-        audioSource.loop = false;
-        
         audioSource.Play();
         Destroy(tempGO, clip.length);
     }
@@ -193,9 +189,13 @@ public class AudioManager : MonoBehaviour
     {
         return category switch
         {
-            AudioCategory.MenuSFX => menuSfxMixerGroup,
-            AudioCategory.SFX => sfxMixerGroup,
-            _ => null
+            AudioCategory.GlobalMusic => globalMusicGroup,
+            AudioCategory.LocalMusic => localMusicGroup,
+            AudioCategory.SFX => sfxGroup,
+            AudioCategory.MenuSFX => menuSfxGroup,
+            AudioCategory.GameSFX => gameSfxGroup,
+            AudioCategory.Metronome => metronomeGroup,
+            _ => masterGroup
         };
     }
     #endregion
@@ -203,7 +203,10 @@ public class AudioManager : MonoBehaviour
 
 public enum AudioCategory
 {
+    GlobalMusic,
+    LocalMusic,
     SFX,
     MenuSFX,
-    GameSFX
+    GameSFX,
+    Metronome
 }
