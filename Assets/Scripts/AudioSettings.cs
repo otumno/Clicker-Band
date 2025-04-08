@@ -1,10 +1,12 @@
+using UnityEngine;
+
 [System.Serializable]
 public class AudioSettings
 {
-    public float masterVolume = 1.0f;      // Основной громкость
-    public float musicVolume = 1.0f;       // Громкость музыки
-    public float sfxVolume = 1.0f;         // Громкость звуковых эффектов
-    public float menuSFXVolume = 1.0f;     // Громкость звуков меню
-    public float gameSFXVolume = 1.0f;     // Громкость игровых звуков
-    public float metronomeVolume = 1.0f;    // Громкость метронома
+    [Range(0f, 1f)] public float masterVolume = 1.0f;
+    [Range(0f, 1f)] public float musicVolume = 1.0f;
+    [Range(0f, 1f)] public float sfxVolume = 1.0f;
+    [Range(0f, 1f)] public float menuSFXVolume = 1.0f;
+    [Range(0f, 1f)] public float gameSFXVolume = 1.0f;
+    [Range(0f, 1f)] public float metronomeVolume = 1.0f;
 }

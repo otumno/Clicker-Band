@@ -13,7 +13,6 @@ public class AudioSettingsUI : MonoBehaviour
     [SerializeField] private Slider gameSfxSlider;
     [SerializeField] private Slider metronomeSlider;
 
-    // Ключи для PlayerPrefs
     private const string MASTER_KEY = "MasterVolume";
     private const string MUSIC_KEY = "MusicVolume";
     private const string SFX_KEY = "SFXVolume";
@@ -23,79 +22,83 @@ public class AudioSettingsUI : MonoBehaviour
 
     private void Start()
     {
-        // Загрузка сохранённых значений или значений по умолчанию из AudioSettings
-        LoadSavedVolumes();
-
-        // Подписка на события изменения слайдеров
-        SubscribeSliders();
-
-        // Первоначальное обновление громкости
-        AudioManager.Instance?.UpdateAllVolumes(audioSettings);
-    }
-
-    private void LoadSavedVolumes()
-    {
+        // Инициализация слайдеров
         masterSlider.value = PlayerPrefs.GetFloat(MASTER_KEY, audioSettings.masterVolume);
         musicSlider.value = PlayerPrefs.GetFloat(MUSIC_KEY, audioSettings.musicVolume);
         sfxSlider.value = PlayerPrefs.GetFloat(SFX_KEY, audioSettings.sfxVolume);
         menuSfxSlider.value = PlayerPrefs.GetFloat(MENU_SFX_KEY, audioSettings.menuSFXVolume);
         gameSfxSlider.value = PlayerPrefs.GetFloat(GAME_SFX_KEY, audioSettings.gameSFXVolume);
         metronomeSlider.value = PlayerPrefs.GetFloat(METRONOME_KEY, audioSettings.metronomeVolume);
-    }
 
-    private void SubscribeSliders()
-    {
+        // Подписка на события
         masterSlider.onValueChanged.AddListener(UpdateMasterVolume);
         musicSlider.onValueChanged.AddListener(UpdateMusicVolume);
         sfxSlider.onValueChanged.AddListener(UpdateSFXVolume);
         menuSfxSlider.onValueChanged.AddListener(UpdateMenuSFXVolume);
         gameSfxSlider.onValueChanged.AddListener(UpdateGameSFXVolume);
         metronomeSlider.onValueChanged.AddListener(UpdateMetronomeVolume);
+
+        // Применение начальных значений
+        if (AudioManager.Instance != null)
+        {
+            AudioManager.Instance.UpdateAllVolumes(audioSettings);
+        }
+        else
+        {
+            Debug.LogWarning("AudioManager instance not found!");
+        }
     }
 
     private void UpdateMasterVolume(float value)
     {
         audioSettings.masterVolume = value;
         PlayerPrefs.SetFloat(MASTER_KEY, value);
-        AudioManager.Instance?.UpdateAllVolumes(audioSettings);
+        UpdateAudioVolumes();
     }
 
     private void UpdateMusicVolume(float value)
     {
         audioSettings.musicVolume = value;
         PlayerPrefs.SetFloat(MUSIC_KEY, value);
-        AudioManager.Instance?.UpdateAllVolumes(audioSettings);
+        UpdateAudioVolumes();
     }
 
     private void UpdateSFXVolume(float value)
     {
         audioSettings.sfxVolume = value;
         PlayerPrefs.SetFloat(SFX_KEY, value);
-        AudioManager.Instance?.UpdateAllVolumes(audioSettings);
+        UpdateAudioVolumes();
     }
 
     private void UpdateMenuSFXVolume(float value)
     {
         audioSettings.menuSFXVolume = value;
         PlayerPrefs.SetFloat(MENU_SFX_KEY, value);
-        AudioManager.Instance?.UpdateAllVolumes(audioSettings);
+        UpdateAudioVolumes();
     }
 
     private void UpdateGameSFXVolume(float value)
     {
         audioSettings.gameSFXVolume = value;
         PlayerPrefs.SetFloat(GAME_SFX_KEY, value);
-        AudioManager.Instance?.UpdateAllVolumes(audioSettings);
+        UpdateAudioVolumes();
     }
 
     private void UpdateMetronomeVolume(float value)
     {
         audioSettings.metronomeVolume = value;
         PlayerPrefs.SetFloat(METRONOME_KEY, value);
-        AudioManager.Instance?.UpdateAllVolumes(audioSettings);
+        UpdateAudioVolumes();
     }
 
-    // Опционально: сохранение при выходе из игры
+    private void UpdateAudioVolumes()
+    {
+        if (AudioManager.Instance != null)
+        {
+            AudioManager.Instance.UpdateAllVolumes(audioSettings);
+        }
+    }
+
     private void OnApplicationQuit()
     {
         PlayerPrefs.Save();
