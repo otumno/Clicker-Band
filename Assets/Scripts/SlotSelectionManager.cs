@@ -12,77 +12,111 @@ public class SlotSelectionManager : MonoBehaviour
     public Text slot1TimeText;
     public Text slot2TimeText;
     public Text slot3TimeText;
-    public Button slot1DeleteButton;
-    public Button slot2DeleteButton;
-    public Button slot3DeleteButton;
+    public RectTransform slot1DeleteButton;
+    public RectTransform slot2DeleteButton;
+    public RectTransform slot3DeleteButton;
 
     [Header("Confirmation Panel")]
     public GameObject confirmationPanel;
-    public Image confirmationBackground;
     public Text confirmationText;
-    public Button confirmButton;
-    public Button cancelButton;
+    public RectTransform confirmButton;
+    public RectTransform cancelButton;
 
     [Header("Name Input Panel")]
     public GameObject nameInputPanel;
-    public Image nameInputBackground;
     public InputField nameInputField;
-    public Button nameConfirmButton;
+    public RectTransform nameConfirmButton;
 
     private int selectedSlot;
 
     private void Awake()
     {
-        // Инициализация обработчиков кнопок
+        ConfigureAllButtons();
         InitializeButtonListeners();
-        
-        // Настройка панелей
         SetupPanels();
-    }
-
-    private void InitializeButtonListeners()
-    {
-        // Кнопки удаления
-        if (slot1DeleteButton != null) slot1DeleteButton.onClick.AddListener(() => ShowDeleteConfirmation(1));
-        if (slot2DeleteButton != null) slot2DeleteButton.onClick.AddListener(() => ShowDeleteConfirmation(2));
-        if (slot3DeleteButton != null) slot3DeleteButton.onClick.AddListener(() => ShowDeleteConfirmation(3));
-
-        // Кнопки подтверждения
-        if (confirmButton != null) confirmButton.onClick.AddListener(ConfirmDelete);
-        if (cancelButton != null) cancelButton.onClick.AddListener(HideConfirmationPanel);
-        if (nameConfirmButton != null) nameConfirmButton.onClick.AddListener(ConfirmNameAndStartGame);
     }
 
     private void SetupPanels()
     {
-        // Настройка панели подтверждения
-        if (confirmationBackground != null)
-        {
-            confirmationBackground.raycastTarget = true;
-            confirmationBackground.color = new Color(0, 0, 0, 0.7f);
-        }
-
-        // Настройка панели ввода имени
-        if (nameInputBackground != null)
-        {
-            nameInputBackground.raycastTarget = true;
-            nameInputBackground.color = new Color(0, 0, 0, 0.7f);
-        }
-
-        // Скрываем панели при старте
         if (confirmationPanel != null) confirmationPanel.SetActive(false);
         if (nameInputPanel != null) nameInputPanel.SetActive(false);
     }
 
+    private void ConfigureAllButtons()
+    {
+        ConfigureButtonHitbox(slot1DeleteButton);
+        ConfigureButtonHitbox(slot2DeleteButton);
+        ConfigureButtonHitbox(slot3DeleteButton);
+        ConfigureButtonHitbox(confirmButton);
+        ConfigureButtonHitbox(cancelButton);
+        ConfigureButtonHitbox(nameConfirmButton);
+    }
+
+    private void ConfigureButtonHitbox(RectTransform buttonRect)
+    {
+        if (buttonRect == null) return;
+
+        // Удаляем все ненужные компоненты Image
+        Image[] images = buttonRect.GetComponents<Image>();
+        for (int i = 1; i < images.Length; i++)
+        {
+            Destroy(images[i]);
+        }
+
+        // Оставляем/добавляем один Image
+        Image image = buttonRect.GetComponent<Image>();
+        if (image == null)
+        {
+            image = buttonRect.gameObject.AddComponent<Image>();
+        }
+        image.color = new Color(1, 1, 1, 0.01f); // Почти прозрачный
+        image.raycastTarget = true;
+
+        // Настраиваем Button
+        Button button = buttonRect.GetComponent<Button>();
+        if (button == null)
+        {
+            button = buttonRect.gameObject.AddComponent<Button>();
+        }
+
+        // Устанавливаем минимальные размеры
+        if (buttonRect.sizeDelta.x < 100f || buttonRect.sizeDelta.y < 50f)
+        {
+            buttonRect.sizeDelta = new Vector2(
+                Mathf.Max(100f, buttonRect.sizeDelta.x),
+                Mathf.Max(50f, buttonRect.sizeDelta.y)
+            );
+        }
+    }
+
+    private void InitializeButtonListeners()
+    {
+        AssignButtonListener(slot1DeleteButton, () => ShowDeleteConfirmation(1));
+        AssignButtonListener(slot2DeleteButton, () => ShowDeleteConfirmation(2));
+        AssignButtonListener(slot3DeleteButton, () => ShowDeleteConfirmation(3));
+        AssignButtonListener(confirmButton, ConfirmDelete);
+        AssignButtonListener(cancelButton, HideConfirmationPanel);
+        AssignButtonListener(nameConfirmButton, ConfirmNameAndStartGame);
+    }
+
+    private void AssignButtonListener(RectTransform buttonRect, UnityEngine.Events.UnityAction action)
+    {
+        if (buttonRect == null) return;
+        
+        Button button = buttonRect.GetComponent<Button>();
+        if (button != null)
+        {
+            button.onClick.RemoveAllListeners();
+            button.onClick.AddListener(action);
+        }
+    }
+
     private IEnumerator Start()
     {
-        // Ждем инициализации SaveManager
         while (SaveManager.Instance == null)
         {
             yield return null;
         }
-
-        // Обновляем UI слотов
         UpdateAllSlotsUI();
     }
 
@@ -93,43 +127,35 @@ public class SlotSelectionManager : MonoBehaviour
         UpdateSlotUI(3, slot3Text, slot3TimeText, slot3DeleteButton);
     }
 
-    private void UpdateSlotUI(int slot, Text slotText, Text timeText, Button deleteButton)
+    private void UpdateSlotUI(int slot, Text slotText, Text timeText, RectTransform deleteButton)
     {
-        if (SaveManager.Instance == null || slotText == null || timeText == null || deleteButton == null)
-            return;
+        if (SaveManager.Instance == null) return;
 
         bool saveExists = SaveManager.Instance.SaveExists(slot);
         
         if (deleteButton != null)
             deleteButton.gameObject.SetActive(saveExists);
 
-        if (saveExists)
-        {
-            PlayerData data = SaveManager.Instance.LoadGame(slot);
-            if (data != null)
-            {
-                if (slotText != null) slotText.text = $"{data.playerName} (Slot {slot})";
-                if (timeText != null) timeText.text = $"Saved: {data.lastSaveTime:g}";
-            }
-        }
-        else
-        {
-            if (slotText != null) slotText.text = $"Slot {slot} (Empty)";
-            if (timeText != null) timeText.text = string.Empty;
-        }
+        if (slotText != null)
+            slotText.text = saveExists ? 
+                $"{SaveManager.Instance.LoadGame(slot)?.playerName ?? "Player"}" : 
+                $"Empty slot {slot}";
+
+        if (timeText != null)
+            timeText.text = saveExists ? $"Saved: {SaveManager.Instance.LoadGame(slot)?.lastSaveTime:g}" : "";
     }
 
     private void ShowDeleteConfirmation(int slot)
     {
         selectedSlot = slot;
         
-        string slotName = slot switch
+        string slotName = $"Empty slot {slot}";
+        switch(slot)
         {
-            1 => slot1Text != null ? slot1Text.text : $"Slot {slot}",
-            2 => slot2Text != null ? slot2Text.text : $"Slot {slot}",
-            3 => slot3Text != null ? slot3Text.text : $"Slot {slot}",
-            _ => $"Slot {slot}"
-        };
+            case 1 when slot1Text != null: slotName = slot1Text.text; break;
+            case 2 when slot2Text != null: slotName = slot2Text.text; break;
+            case 3 when slot3Text != null: slotName = slot3Text.text; break;
+        }
 
         if (confirmationText != null)
             confirmationText.text = $"Delete {slotName}?";
@@ -138,7 +164,6 @@ public class SlotSelectionManager : MonoBehaviour
         {
             confirmationPanel.SetActive(true);
             confirmationPanel.transform.SetAsLastSibling();
-            LayoutRebuilder.ForceRebuildLayoutImmediate(confirmationPanel.GetComponent<RectTransform>());
         }
     }
 
@@ -166,11 +191,8 @@ public class SlotSelectionManager : MonoBehaviour
 
         if (SaveManager.Instance.SaveExists(slot))
         {
-            if (GameManager.Instance != null)
-            {
-                GameManager.Instance.LoadGame(slot);
-                SceneManager.LoadScene("GameScene");
-            }
+            GameManager.Instance?.LoadGame(slot);
+            SceneManager.LoadScene("GameScene");
         }
         else
         {
@@ -178,19 +200,17 @@ public class SlotSelectionManager : MonoBehaviour
             {
                 nameInputPanel.SetActive(true);
                 nameInputPanel.transform.SetAsLastSibling();
-                LayoutRebuilder.ForceRebuildLayoutImmediate(nameInputPanel.GetComponent<RectTransform>());
-                
                 if (nameInputField != null)
-                    nameInputField.text = string.Empty;
+                    nameInputField.text = "";
             }
         }
     }
 
     private void ConfirmNameAndStartGame()
     {
-        string playerName = "Player";
-        if (nameInputField != null && !string.IsNullOrWhiteSpace(nameInputField.text))
-            playerName = nameInputField.text.Trim();
+        string playerName = nameInputField?.text?.Trim() ?? "Player";
+        if (string.IsNullOrEmpty(playerName))
+            playerName = "Player";
 
         if (GameManager.Instance != null)
         {
