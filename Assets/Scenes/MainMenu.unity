@@ -337,7 +337,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0.6431373, g: 0.105882354, b: 0.105882354, a: 1}
+  m_Color: {r: 0.48404884, g: 0.10588233, b: 0.6431373, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -557,7 +557,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0.6431373, g: 0.105882354, b: 0.105882354, a: 1}
+  m_Color: {r: 0.18053582, g: 0.6431373, b: 0.10588233, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -658,7 +658,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   m_FontData:
-    m_Font: {fileID: 12800000, guid: a64f64880f72c044281d72cc01e0dbac, type: 3}
+    m_Font: {fileID: 12800000, guid: 487553d7bc4373648a69d7ec5c56ad64, type: 3}
     m_FontSize: 55
     m_FontStyle: 0
     m_BestFit: 0
@@ -970,7 +970,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0.6431373, g: 0.105882354, b: 0.105882354, a: 1}
+  m_Color: {r: 0.8396226, g: 0.6006222, b: 0, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -1087,7 +1087,7 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: -2
-  m_Sprite: {fileID: 21300000, guid: df384e1e638304f4bb00bcb872d5e1f2, type: 3}
+  m_Sprite: {fileID: 21300000, guid: b59a1eb4a77a449499031d6dd0fb8c16, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -1242,8 +1242,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   currentPlayerData:
-    score: 0
     playerName: Player
+    score: 0
   currentSlot: 0
 --- !u!1 &1570287093
 GameObject:
@@ -1437,7 +1437,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   m_FontData:
-    m_Font: {fileID: 12800000, guid: a64f64880f72c044281d72cc01e0dbac, type: 3}
+    m_Font: {fileID: 12800000, guid: 487553d7bc4373648a69d7ec5c56ad64, type: 3}
     m_FontSize: 55
     m_FontStyle: 0
     m_BestFit: 0
@@ -1689,7 +1689,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   m_FontData:
-    m_Font: {fileID: 12800000, guid: a64f64880f72c044281d72cc01e0dbac, type: 3}
+    m_Font: {fileID: 12800000, guid: 487553d7bc4373648a69d7ec5c56ad64, type: 3}
     m_FontSize: 55
     m_FontStyle: 0
     m_BestFit: 0
@@ -2013,7 +2013,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0.6415094, g: 0.105909556, b: 0.105909556, a: 1}
+  m_Color: {r: 0.10588233, g: 0.3150638, b: 0.6431373, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1

@@ -24,7 +24,7 @@ MonoBehaviour:
   m_MinSize: {x: 300, y: 100}
   m_MaxSize: {x: 24288, y: 16192}
   vertical: 0
-  controlID: 11680
+  controlID: 53173
   draggingID: 0
 --- !u!114 &2
 MonoBehaviour:
@@ -150,7 +150,7 @@ MonoBehaviour:
   m_MinSize: {x: 200, y: 100}
   m_MaxSize: {x: 16192, y: 16192}
   vertical: 1
-  controlID: 11681
+  controlID: 53174
   draggingID: 0
 --- !u!114 &4
 MonoBehaviour:
@@ -176,7 +176,7 @@ MonoBehaviour:
   m_MinSize: {x: 200, y: 50}
   m_MaxSize: {x: 16192, y: 8096}
   vertical: 0
-  controlID: 11682
+  controlID: 53175
   draggingID: 0
 --- !u!114 &5
 MonoBehaviour:
@@ -197,8 +197,8 @@ MonoBehaviour:
     y: 0
     width: 435
     height: 713
-  m_MinSize: {x: 201, y: 221}
-  m_MaxSize: {x: 4001, y: 4021}
+  m_MinSize: {x: 200, y: 200}
+  m_MaxSize: {x: 4000, y: 4000}
   m_ActualView: {fileID: 6}
   m_Panes:
   - {fileID: 6}
@@ -241,9 +241,9 @@ MonoBehaviour:
   m_SceneHierarchy:
     m_TreeViewState:
       scrollPos: {x: 0, y: 0}
-      m_SelectedIDs: 
+      m_SelectedIDs: 38670000
       m_LastClickedID: 0
-      m_ExpandedIDs: 5677ffff889bffff169cffff2a9dffff8aceffffd8cfffff2ad0ffff50e1ffff8ce1ffffc0f7ffffc0f8ffff0cf9ffff16fbffffe86700004c680000b0680000da680000326900003a69000098690000ca690000dc6900003a6a00000c6c0000266c0000706c0000d46c0000fe6c00000c6d0000166d0000566d00005e6d0000ec940000069500003695000074950000aa950000b4950000ec95000036960000
+      m_ExpandedIDs: f691feff3092feff8e94feff6a99feffa499feffe699feff669bfeffac9bfeff4aa1feffc0a1feffe0a5feff54a6fefffea9feff7aaafefff0b3feff22b4feffa0b4feffe8b4feff4ab6feff46b9feff82b9feff50bcfeff1edafeffa2dafefff6dafeff9cdcfeffd6dcfeffd8dffeff3ce4feff8ce8feffdae8feff822dffffbc2dffff022effff3c2effff7a2effff9034ffff1a36ffff0a39ffff424effff9250ffff2e51ffff6e51fffff462ffff5677ffff889bffff169cffff2a9dffff8aceffffd8cfffff2ad0ffff50e1ffff8ce1ffffc0f7ffffc0f8ffff0cf9ffff16fbffffe86700004c680000b0680000da680000326900003a69000098690000ca690000dc6900003a6a00000c6c0000266c0000706c0000d46c0000fe6c00000c6d0000166d0000566d00005e6d0000ec940000069500003695000074950000aa950000b4950000ec95000036960000a858010038590100625901007c590100ac590100d05901002a5a0100345a01005e5a0100765a0100a45a0100c05a0100d85a01001a77010024770100387701004c7701005e770100aa770100907801009c780100b67801006c79010090790100b0790100c6790100e07901000a7a0100367a0100447a0100567a0100008001000a800100328001005e8001008080010088800100309f01007a9f0100a29f0100fc9f010006a0010030a0010076a0010092a00100aaa0010030a7010052a70100c2ab010026ac01007aad0100c4ad0100ecad010010ae01002aae010034ae010050ae01007aae0100b6ae0100dcae010000b7010022b7010058be010074c80100cac80100e8c80100d4c9010062cd0100a6ce0100e2ce010018d60100c8d60100bcd70100e6dc0100f0dc010018dd010044dd010066dd01006edd010004e50100cae501001ced01004eed010066f401008ef40100
       m_RenameOverlay:
         m_UserAcceptedRename: 0
         m_Name: 
@@ -934,7 +934,7 @@ MonoBehaviour:
     m_SkipHidden: 0
     m_SearchArea: 1
     m_Folders:
-    - Assets/Scripts
+    - Assets/Scenes
     m_Globs: []
     m_OriginalText: 
     m_ImportLogFlags: 0
@@ -942,15 +942,15 @@ MonoBehaviour:
   m_ViewMode: 1
   m_StartGridSize: 16
   m_LastFolders:
-  - Assets/Scripts
+  - Assets/Scenes
   m_LastFoldersGridSize: 16
   m_LastProjectPath: C:\Users\NoName\Git-projects\Clicker-Band
   m_LockTracker:
     m_IsLocked: 0
   m_FolderTreeState:
     scrollPos: {x: 0, y: 0}
-    m_SelectedIDs: c4640000
-    m_LastClickedID: 25796
+    m_SelectedIDs: c2640000
+    m_LastClickedID: 25794
     m_ExpandedIDs: 00000000a064000000ca9a3b
     m_RenameOverlay:
       m_UserAcceptedRename: 0
@@ -1004,24 +1004,24 @@ MonoBehaviour:
       m_Icon: {fileID: 0}
       m_ResourceFile: 
   m_ListAreaState:
-    m_SelectedInstanceIDs: 
-    m_LastClickedInstanceID: 0
+    m_SelectedInstanceIDs: 38670000
+    m_LastClickedInstanceID: 26424
     m_HadKeyboardFocusLastEvent: 1
-    m_ExpandedInstanceIDs: c6230000b67e0000de750000e4b5ffffa6620000
+    m_ExpandedInstanceIDs: c6230000b67e0000de750000e4b5ffffa662000000000000
     m_RenameOverlay:
       m_UserAcceptedRename: 0
-      m_Name: SlotSelectionManager
-      m_OriginalName: SlotSelectionManager
+      m_Name: 
+      m_OriginalName: 
       m_EditFieldRect:
         serializedVersion: 2
         x: 0
         y: 0
         width: 0
         height: 0
-      m_UserData: 23874
+      m_UserData: 0
       m_IsWaitingForDelay: 0
       m_IsRenaming: 0
-      m_OriginalEventType: 0
+      m_OriginalEventType: 11
       m_IsRenamingFilename: 1
       m_ClientGUIView: {fileID: 11}
     m_CreateAssetUtility:

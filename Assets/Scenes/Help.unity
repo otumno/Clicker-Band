@@ -174,9 +174,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 708e12007beb50c4986c9540e231f861, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  defaultFadeDuration: 1
-  firstLaunchFadeDuration: 3
-  firstLaunchKey: IsFirstLaunch
+  fadeDuration: 1
   transitionSound: {fileID: 8300000, guid: 95f83ab2ae07cf5489283af87b566e3b, type: 3}
   fadeCanvas: {fileID: 1017006928}
   fadeImage: {fileID: 1271543864}
@@ -511,7 +509,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   m_FontData:
-    m_Font: {fileID: 12800000, guid: a64f64880f72c044281d72cc01e0dbac, type: 3}
+    m_Font: {fileID: 12800000, guid: 487553d7bc4373648a69d7ec5c56ad64, type: 3}
     m_FontSize: 55
     m_FontStyle: 0
     m_BestFit: 0

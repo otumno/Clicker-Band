@@ -1,17 +1,22 @@
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
+using System;
 using System.Collections;
+using System.Globalization;
 
 public class SlotSelectionManager : MonoBehaviour
 {
     [Header("Slot UI References")]
-    public Text slot1Text;
-    public Text slot2Text;
-    public Text slot3Text;
+    public Text slot1NameText;
+    public Text slot2NameText;
+    public Text slot3NameText;
     public Text slot1TimeText;
     public Text slot2TimeText;
     public Text slot3TimeText;
+    public Text slot1FameText;
+    public Text slot2FameText;
+    public Text slot3FameText;
     public RectTransform slot1DeleteButton;
     public RectTransform slot2DeleteButton;
     public RectTransform slot3DeleteButton;
@@ -31,9 +36,19 @@ public class SlotSelectionManager : MonoBehaviour
 
     private void Awake()
     {
+        // Установка английской культуры для корректного отображения месяцев
+        CultureInfo.DefaultThreadCurrentCulture = new CultureInfo("en-US");
+        CultureInfo.DefaultThreadCurrentUICulture = new CultureInfo("en-US");
+
         ConfigureAllButtons();
         InitializeButtonListeners();
         SetupPanels();
+    }
+
+    private string FormatCompactDateTime(DateTime date)
+    {
+        // Формат: "5 Jul 14:30" (день месяц время)
+        return date.ToString("d MMM HH:mm", CultureInfo.CurrentCulture);
     }
 
     private void SetupPanels()
@@ -44,42 +59,35 @@ public class SlotSelectionManager : MonoBehaviour
 
     private void ConfigureAllButtons()
     {
-        ConfigureButtonHitbox(slot1DeleteButton);
-        ConfigureButtonHitbox(slot2DeleteButton);
-        ConfigureButtonHitbox(slot3DeleteButton);
-        ConfigureButtonHitbox(confirmButton);
-        ConfigureButtonHitbox(cancelButton);
-        ConfigureButtonHitbox(nameConfirmButton);
+        ConfigureButton(slot1DeleteButton);
+        ConfigureButton(slot2DeleteButton);
+        ConfigureButton(slot3DeleteButton);
+        ConfigureButton(confirmButton);
+        ConfigureButton(cancelButton);
+        ConfigureButton(nameConfirmButton);
     }
 
-    private void ConfigureButtonHitbox(RectTransform buttonRect)
+    private void ConfigureButton(RectTransform buttonRect)
     {
         if (buttonRect == null) return;
 
-        // Удаляем все ненужные компоненты Image
-        Image[] images = buttonRect.GetComponents<Image>();
-        for (int i = 1; i < images.Length; i++)
-        {
-            Destroy(images[i]);
-        }
-
-        // Оставляем/добавляем один Image
+        // Настройка Image для кнопки
         Image image = buttonRect.GetComponent<Image>();
         if (image == null)
         {
             image = buttonRect.gameObject.AddComponent<Image>();
         }
-        image.color = new Color(1, 1, 1, 0.01f); // Почти прозрачный
+        image.color = Color.white;
         image.raycastTarget = true;
 
-        // Настраиваем Button
+        // Настройка Button компонента
         Button button = buttonRect.GetComponent<Button>();
         if (button == null)
         {
             button = buttonRect.gameObject.AddComponent<Button>();
         }
 
-        // Устанавливаем минимальные размеры
+        // Минимальные размеры кнопки
         if (buttonRect.sizeDelta.x < 100f || buttonRect.sizeDelta.y < 50f)
         {
             buttonRect.sizeDelta = new Vector2(
@@ -122,12 +130,12 @@ public class SlotSelectionManager : MonoBehaviour
 
     private void UpdateAllSlotsUI()
     {
-        UpdateSlotUI(1, slot1Text, slot1TimeText, slot1DeleteButton);
-        UpdateSlotUI(2, slot2Text, slot2TimeText, slot2DeleteButton);
-        UpdateSlotUI(3, slot3Text, slot3TimeText, slot3DeleteButton);
+        UpdateSlotUI(1, slot1NameText, slot1TimeText, slot1FameText, slot1DeleteButton);
+        UpdateSlotUI(2, slot2NameText, slot2TimeText, slot2FameText, slot2DeleteButton);
+        UpdateSlotUI(3, slot3NameText, slot3TimeText, slot3FameText, slot3DeleteButton);
     }
 
-    private void UpdateSlotUI(int slot, Text slotText, Text timeText, RectTransform deleteButton)
+    private void UpdateSlotUI(int slot, Text nameText, Text timeText, Text fameText, RectTransform deleteButton)
     {
         if (SaveManager.Instance == null) return;
 
@@ -136,13 +144,32 @@ public class SlotSelectionManager : MonoBehaviour
         if (deleteButton != null)
             deleteButton.gameObject.SetActive(saveExists);
 
-        if (slotText != null)
-            slotText.text = saveExists ? 
-                $"{SaveManager.Instance.LoadGame(slot)?.playerName ?? "Player"}" : 
-                $"Empty slot {slot}";
+        if (saveExists)
+        {
+            PlayerData data = SaveManager.Instance.LoadGame(slot);
+            if (data != null)
+            {
+                if (nameText != null)
+                    nameText.text = data.playerName; // Только имя
 
-        if (timeText != null)
-            timeText.text = saveExists ? $"Saved: {SaveManager.Instance.LoadGame(slot)?.lastSaveTime:g}" : "";
+                if (timeText != null)
+                    timeText.text = FormatCompactDateTime(data.lastSaveTime); // "5 Jul 14:30"
+
+                if (fameText != null)
+                    fameText.text = $"{data.score} Fame"; // "10 Fame"
+            }
+        }
+        else
+        {
+            if (nameText != null)
+                nameText.text = $"Empty slot {slot}";
+
+            if (timeText != null)
+                timeText.text = "";
+
+            if (fameText != null)
+                fameText.text = "";
+        }
     }
 
     private void ShowDeleteConfirmation(int slot)
@@ -152,9 +179,9 @@ public class SlotSelectionManager : MonoBehaviour
         string slotName = $"Empty slot {slot}";
         switch(slot)
         {
-            case 1 when slot1Text != null: slotName = slot1Text.text; break;
-            case 2 when slot2Text != null: slotName = slot2Text.text; break;
-            case 3 when slot3Text != null: slotName = slot3Text.text; break;
+            case 1 when slot1NameText != null: slotName = slot1NameText.text; break;
+            case 2 when slot2NameText != null: slotName = slot2NameText.text; break;
+            case 3 when slot3NameText != null: slotName = slot3NameText.text; break;
         }
 
         if (confirmationText != null)
@@ -208,7 +235,7 @@ public class SlotSelectionManager : MonoBehaviour
 
     private void ConfirmNameAndStartGame()
     {
-        string playerName = nameInputField?.text?.Trim() ?? "Player";
+        string playerName = nameInputField?.text?.Trim();
         if (string.IsNullOrEmpty(playerName))
             playerName = "Player";
 
