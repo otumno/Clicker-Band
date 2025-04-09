@@ -314,10 +314,10 @@ RectTransform:
   - {fileID: 1745445452}
   m_Father: {fileID: 1825533263}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 200, y: -150}
-  m_SizeDelta: {x: 300, y: 100}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 1, y: 1}
+  m_AnchoredPosition: {x: 200, y: -125}
+  m_SizeDelta: {x: -800, y: -450}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &112692315
 MonoBehaviour:
@@ -1277,10 +1277,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0cd44c1031e13a943bb63640046fad76, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_UiScaleMode: 0
+  m_UiScaleMode: 1
   m_ReferencePixelsPerUnit: 100
   m_ScaleFactor: 1
-  m_ReferenceResolution: {x: 800, y: 600}
+  m_ReferenceResolution: {x: 1920, y: 1080}
   m_ScreenMatchMode: 0
   m_MatchWidthOrHeight: 0
   m_PhysicalUnit: 3
@@ -1300,7 +1300,7 @@ Canvas:
   m_RenderMode: 0
   m_Camera: {fileID: 0}
   m_PlaneDistance: 100
-  m_PixelPerfect: 0
+  m_PixelPerfect: 1
   m_ReceivesEvents: 1
   m_OverrideSorting: 0
   m_OverridePixelPerfect: 0
@@ -1460,10 +1460,10 @@ RectTransform:
   - {fileID: 1950010301}
   m_Father: {fileID: 1825533263}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -200, y: -150}
-  m_SizeDelta: {x: 300, y: 100}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 1, y: 1}
+  m_AnchoredPosition: {x: -200, y: -125}
+  m_SizeDelta: {x: -800, y: -450}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &607755812
 MonoBehaviour:
@@ -1850,7 +1850,7 @@ GameObject:
   - component: {fileID: 842279169}
   - component: {fileID: 842279168}
   m_Layer: 5
-  m_Name: Text (Legacy)
+  m_Name: NameInputTitleText (Legacy)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2433,10 +2433,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0cd44c1031e13a943bb63640046fad76, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_UiScaleMode: 0
+  m_UiScaleMode: 1
   m_ReferencePixelsPerUnit: 100
   m_ScaleFactor: 1
-  m_ReferenceResolution: {x: 800, y: 600}
+  m_ReferenceResolution: {x: 1920, y: 1080}
   m_ScreenMatchMode: 0
   m_MatchWidthOrHeight: 0
   m_PhysicalUnit: 3
@@ -2456,7 +2456,7 @@ Canvas:
   m_RenderMode: 0
   m_Camera: {fileID: 0}
   m_PlaneDistance: 100
-  m_PixelPerfect: 0
+  m_PixelPerfect: 1
   m_ReceivesEvents: 1
   m_OverrideSorting: 0
   m_OverridePixelPerfect: 0
@@ -2479,7 +2479,7 @@ GameObject:
   - component: {fileID: 1050905015}
   - component: {fileID: 1050905016}
   m_Layer: 5
-  m_Name: Text (Legacy)
+  m_Name: ConfirmationText (Legacy)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2501,7 +2501,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 40.82}
+  m_AnchoredPosition: {x: 0, y: 97.1}
   m_SizeDelta: {x: 2000, y: 200}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &1050905015
@@ -2955,12 +2955,13 @@ MonoBehaviour:
   slot1DeleteButton: {fileID: 655399571}
   slot2DeleteButton: {fileID: 894922850}
   slot3DeleteButton: {fileID: 1762972715}
-  confirmationPanel: {fileID: 1825533263}
-  confirmationCanvasGroup: {fileID: 1825533266}
+  confirmationPanel: {fileID: 1825533262}
+  confirmationBackground: {fileID: 1825533264}
   confirmationText: {fileID: 1050905016}
   confirmButton: {fileID: 607755812}
   cancelButton: {fileID: 112692315}
   nameInputPanel: {fileID: 114901331}
+  nameInputBackground: {fileID: 114901333}
   nameInputField: {fileID: 364509380}
   nameConfirmButton: {fileID: 1422688433}
 --- !u!4 &1410019968
@@ -3925,10 +3926,10 @@ RectTransform:
   - {fileID: 112692314}
   m_Father: {fileID: 1021092775}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 50}
-  m_SizeDelta: {x: 1100, y: 500}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 1, y: 1}
+  m_AnchoredPosition: {x: 0, y: -6.9500732}
+  m_SizeDelta: {x: -820, y: -466.10022}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1825533264
 MonoBehaviour:
