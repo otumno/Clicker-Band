@@ -3,9 +3,19 @@ using UnityEngine;
 public class GameManager : MonoBehaviour
 {
     public static GameManager Instance;
-
     public PlayerData currentPlayerData;
     public int currentSlot;
+
+    [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
+    private static void AutoCreate()
+    {
+        if (Instance == null)
+        {
+            GameObject obj = new GameObject("GameManager");
+            Instance = obj.AddComponent<GameManager>();
+            DontDestroyOnLoad(obj);
+        }
+    }
 
     private void Awake()
     {
@@ -14,7 +24,7 @@ public class GameManager : MonoBehaviour
             Instance = this;
             DontDestroyOnLoad(gameObject);
         }
-        else
+        else if (Instance != this)
         {
             Destroy(gameObject);
         }

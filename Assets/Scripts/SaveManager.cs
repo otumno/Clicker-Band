@@ -1,10 +1,21 @@
+using UnityEngine;
 using System;
 using System.IO;
-using UnityEngine;
 
 public class SaveManager : MonoBehaviour
 {
-    public static SaveManager Instance;
+    public static SaveManager Instance { get; private set; }
+
+    [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
+    private static void AutoCreate()
+    {
+        if (Instance == null)
+        {
+            GameObject obj = new GameObject("SaveManager");
+            Instance = obj.AddComponent<SaveManager>();
+            DontDestroyOnLoad(obj);
+        }
+    }
 
     private void Awake()
     {
@@ -13,7 +24,7 @@ public class SaveManager : MonoBehaviour
             Instance = this;
             DontDestroyOnLoad(gameObject);
         }
-        else
+        else if (Instance != this)
         {
             Destroy(gameObject);
         }
@@ -24,6 +35,7 @@ public class SaveManager : MonoBehaviour
         data.lastSaveTime = DateTime.Now;
         string json = JsonUtility.ToJson(data);
         File.WriteAllText(GetSavePath(slot), json);
+        Debug.Log($"Game saved to slot {slot}");
     }
 
     public PlayerData LoadGame(int slot)
@@ -48,17 +60,8 @@ public class SaveManager : MonoBehaviour
         if (File.Exists(path))
         {
             File.Delete(path);
-            Debug.Log($"Save in slot {slot} deleted");
+            Debug.Log($"Deleted save slot {slot}");
         }
-    }
-
-    public DateTime GetSaveTime(int slot)
-    {
-        if (SaveExists(slot))
-        {
-            return LoadGame(slot).lastSaveTime;
-        }
-        return DateTime.MinValue;
     }
 
     private string GetSavePath(int slot)

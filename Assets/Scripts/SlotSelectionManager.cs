@@ -1,7 +1,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
-using System;
+using System.Collections;
 
 public class SlotSelectionManager : MonoBehaviour
 {
@@ -22,45 +22,42 @@ public class SlotSelectionManager : MonoBehaviour
     public Text confirmationText;
     public Button confirmButton;
     public Button cancelButton;
-    public RectTransform confirmButtonRect;
-    public RectTransform cancelButtonRect;
 
-    [Header("Settings")]
-    public bool debugMode = true;
-    public float buttonSpacing = 200f;
+    [Header("Name Input Panel")]
+    public GameObject nameInputPanel;
+    public InputField nameInputField;
+    public Button nameConfirmButton;
 
     private int selectedSlot;
-    private bool isInitialized = false;
 
-    private void Start()
+    private IEnumerator Start()
     {
+        // Ждем инициализации SaveManager
+        while (SaveManager.Instance == null)
+        {
+            yield return null;
+        }
+
         InitializeUI();
     }
 
     private void InitializeUI()
     {
-        if (debugMode) Debug.Log("Initializing SlotSelectionManager UI");
-
         if (!CheckUIReferences())
         {
             enabled = false;
             return;
         }
 
-        SetupButtonsText();
-        SetupButtonListeners();
         SetupConfirmationPanel();
+        SetupNameInputPanel();
         UpdateAllSlotsUI();
-
-        isInitialized = true;
-        if (debugMode) Debug.Log("UI initialization complete");
     }
 
     private bool CheckUIReferences()
     {
         bool isValid = true;
 
-        // Проверка основных элементов слотов
         if (slot1Text == null) { Debug.LogError("Slot1Text not assigned!"); isValid = false; }
         if (slot2Text == null) { Debug.LogError("Slot2Text not assigned!"); isValid = false; }
         if (slot3Text == null) { Debug.LogError("Slot3Text not assigned!"); isValid = false; }
@@ -73,89 +70,45 @@ public class SlotSelectionManager : MonoBehaviour
         if (slot2DeleteButton == null) { Debug.LogError("Slot2DeleteButton not assigned!"); isValid = false; }
         if (slot3DeleteButton == null) { Debug.LogError("Slot3DeleteButton not assigned!"); isValid = false; }
 
-        // Проверка элементов панели подтверждения
         if (confirmationPanel == null) { Debug.LogError("ConfirmationPanel not assigned!"); isValid = false; }
+        if (confirmationCanvasGroup == null) { Debug.LogError("ConfirmationCanvasGroup not assigned!"); isValid = false; }
+        if (confirmationText == null) { Debug.LogError("ConfirmationText not assigned!"); isValid = false; }
         if (confirmButton == null) { Debug.LogError("ConfirmButton not assigned!"); isValid = false; }
         if (cancelButton == null) { Debug.LogError("CancelButton not assigned!"); isValid = false; }
-        if (confirmationText == null) { Debug.LogError("ConfirmationText not assigned!"); isValid = false; }
-        if (confirmButtonRect == null) { Debug.LogError("ConfirmButtonRect not assigned!"); isValid = false; }
-        if (cancelButtonRect == null) { Debug.LogError("CancelButtonRect not assigned!"); isValid = false; }
+
+        if (nameInputPanel == null) { Debug.LogError("NameInputPanel not assigned!"); isValid = false; }
+        if (nameInputField == null) { Debug.LogError("NameInputField not assigned!"); isValid = false; }
+        if (nameConfirmButton == null) { Debug.LogError("NameConfirmButton not assigned!"); isValid = false; }
 
         return isValid;
     }
 
     private void SetupConfirmationPanel()
     {
-        // Добавляем CanvasGroup если отсутствует
         if (confirmationCanvasGroup == null)
         {
             confirmationCanvasGroup = confirmationPanel.gameObject.AddComponent<CanvasGroup>();
         }
 
-        // Настройка позиционирования
-        confirmationPanel.anchorMin = new Vector2(0.5f, 0.5f);
-        confirmationPanel.anchorMax = new Vector2(0.5f, 0.5f);
-        confirmationPanel.pivot = new Vector2(0.5f, 0.5f);
-        confirmationPanel.anchoredPosition = Vector2.zero;
-
-        // Расположение кнопок с заданным интервалом
-        confirmButtonRect.anchoredPosition = new Vector2(-buttonSpacing/2, -50f);
-        cancelButtonRect.anchoredPosition = new Vector2(buttonSpacing/2, -50f);
-
-        // Отключаем панель
-        confirmationCanvasGroup.alpha = 0f;
+        confirmationCanvasGroup.alpha = 0;
         confirmationCanvasGroup.blocksRaycasts = false;
-        confirmationCanvasGroup.interactable = false;
 
-        // Настройка порядка отрисовки
-        confirmationPanel.transform.SetAsLastSibling();
-
-        if (debugMode) Debug.Log("Confirmation panel setup complete");
-    }
-
-    private void SetupButtonsText()
-    {
-        SetButtonText(slot1DeleteButton, "DELETE");
-        SetButtonText(slot2DeleteButton, "DELETE");
-        SetButtonText(slot3DeleteButton, "DELETE");
-        
-        SetButtonText(confirmButton, "YES");
-        SetButtonText(cancelButton, "NO");
-    }
-
-    private void SetButtonText(Button button, string text)
-    {
-        if (button == null) return;
-
-        Text btnText = button.GetComponentInChildren<Text>(true);
-        if (btnText != null)
-        {
-            btnText.text = text;
-        }
-        else if (debugMode)
-        {
-            Debug.LogWarning($"No Text component found on button: {button.name}");
-        }
-    }
-
-    private void SetupButtonListeners()
-    {
-        // Очищаем старые обработчики
-        slot1DeleteButton.onClick.RemoveAllListeners();
-        slot2DeleteButton.onClick.RemoveAllListeners();
-        slot3DeleteButton.onClick.RemoveAllListeners();
         confirmButton.onClick.RemoveAllListeners();
         cancelButton.onClick.RemoveAllListeners();
 
-        // Назначаем новые обработчики
-        slot1DeleteButton.onClick.AddListener(() => ShowDeleteConfirmation(1));
-        slot2DeleteButton.onClick.AddListener(() => ShowDeleteConfirmation(2));
-        slot3DeleteButton.onClick.AddListener(() => ShowDeleteConfirmation(3));
-        
         confirmButton.onClick.AddListener(ConfirmDelete);
-        cancelButton.onClick.AddListener(CancelDelete);
+        cancelButton.onClick.AddListener(() => 
+        {
+            confirmationCanvasGroup.alpha = 0;
+            confirmationCanvasGroup.blocksRaycasts = false;
+        });
+    }
 
-        if (debugMode) Debug.Log("Button listeners setup complete");
+    private void SetupNameInputPanel()
+    {
+        nameInputPanel.SetActive(false);
+        nameConfirmButton.onClick.RemoveAllListeners();
+        nameConfirmButton.onClick.AddListener(ConfirmNameAndStartGame);
     }
 
     private void UpdateAllSlotsUI()
@@ -167,74 +120,79 @@ public class SlotSelectionManager : MonoBehaviour
 
     private void UpdateSlotUI(int slot, Text slotText, Text timeText, Button deleteButton)
     {
-        if (slotText == null || timeText == null || deleteButton == null) return;
+        if (slotText == null || timeText == null || deleteButton == null)
+        {
+            Debug.LogError($"UI elements for slot {slot} are not assigned!");
+            return;
+        }
+
+        if (SaveManager.Instance == null)
+        {
+            Debug.LogError("SaveManager is not initialized!");
+            return;
+        }
 
         bool saveExists = SaveManager.Instance.SaveExists(slot);
-        slotText.text = saveExists ? $"Slot {slot} (Used)" : $"Slot {slot} (Empty)";
 
         if (saveExists)
         {
-            DateTime saveTime = SaveManager.Instance.GetSaveTime(slot);
-            timeText.text = $"Last save: {saveTime:g}";
+            PlayerData data = SaveManager.Instance.LoadGame(slot);
+            if (data != null)
+            {
+                slotText.text = $"{data.playerName} (Slot {slot})";
+                timeText.text = $"Saved: {data.lastSaveTime:g}";
+            }
             deleteButton.gameObject.SetActive(true);
         }
         else
         {
+            slotText.text = $"Slot {slot} (Empty)";
             timeText.text = "";
             deleteButton.gameObject.SetActive(false);
         }
     }
 
-    private void ShowDeleteConfirmation(int slot)
+    public void ShowDeleteConfirmation(int slot)
     {
-        if (!isInitialized) return;
-
         selectedSlot = slot;
-        confirmationText.text = $"Are you sure you want to delete save in Slot {slot}?\nAll progress will be lost!";
         
-        // Активируем панель
-        confirmationPanel.transform.SetAsLastSibling();
-        confirmationCanvasGroup.alpha = 1f;
+        string slotName = "";
+        switch(slot)
+        {
+            case 1: slotName = slot1Text.text; break;
+            case 2: slotName = slot2Text.text; break;
+            case 3: slotName = slot3Text.text; break;
+        }
+
+        confirmationText.text = $"Delete {slotName}?";
+        confirmationCanvasGroup.alpha = 1;
         confirmationCanvasGroup.blocksRaycasts = true;
-        confirmationCanvasGroup.interactable = true;
-
-        if (debugMode) Debug.Log($"Showing confirmation for slot {slot}");
-    }
-
-    private void HideConfirmationPanel()
-    {
-        confirmationCanvasGroup.alpha = 0f;
-        confirmationCanvasGroup.blocksRaycasts = false;
-        confirmationCanvasGroup.interactable = false;
-
-        if (debugMode) Debug.Log("Confirmation panel hidden");
     }
 
     private void ConfirmDelete()
     {
-        if (!isInitialized) return;
+        if (SaveManager.Instance == null)
+        {
+            Debug.LogError("SaveManager is missing!");
+            return;
+        }
 
         SaveManager.Instance.DeleteSave(selectedSlot);
         UpdateAllSlotsUI();
-        HideConfirmationPanel();
-
-        if (debugMode) Debug.Log($"Confirmed deletion of slot {selectedSlot}");
-    }
-
-    private void CancelDelete()
-    {
-        if (!isInitialized) return;
-
-        HideConfirmationPanel();
-        if (debugMode) Debug.Log("Deletion cancelled");
+        confirmationCanvasGroup.alpha = 0;
+        confirmationCanvasGroup.blocksRaycasts = false;
     }
 
     public void OnSlotSelected(int slot)
     {
-        if (!isInitialized) return;
-
         selectedSlot = slot;
-        
+
+        if (SaveManager.Instance == null)
+        {
+            Debug.LogError("SaveManager is not initialized!");
+            return;
+        }
+
         if (SaveManager.Instance.SaveExists(slot))
         {
             GameManager.Instance.LoadGame(slot);
@@ -242,8 +200,22 @@ public class SlotSelectionManager : MonoBehaviour
         }
         else
         {
-            GameManager.Instance.CreateNewGame(slot);
-            SceneManager.LoadScene("GameScene");
+            nameInputPanel.SetActive(true);
+            nameInputPanel.transform.SetAsLastSibling();
         }
+    }
+
+    private void ConfirmNameAndStartGame()
+    {
+        string playerName = nameInputField.text.Trim();
+        if (string.IsNullOrEmpty(playerName))
+        {
+            playerName = "Player";
+        }
+
+        GameManager.Instance.CreateNewGame(selectedSlot);
+        GameManager.Instance.currentPlayerData.playerName = playerName;
+        GameManager.Instance.SaveCurrentGame();
+        SceneManager.LoadScene("GameScene");
     }
 }
