@@ -1,4 +1,3 @@
-// GlobalAudioManager.cs
 using UnityEngine;
 
 public class GlobalAudioManager : MonoBehaviour
@@ -8,13 +7,15 @@ public class GlobalAudioManager : MonoBehaviour
     [Header("Timing Settings")]
     [Range(60, 240)] public int BPM = 120;
     [Tooltip("Pre-beat window in milliseconds")] 
-    [SerializeField] private float preBeatWindow = 100f;
+    [Range(0, 500)] public float preBeatWindow = 100f;
     [Tooltip("Post-beat window in milliseconds")]
-    [SerializeField] private float postBeatWindow = 50f;
+    [Range(0, 500)] public float postBeatWindow = 50f;
 
     private float beatInterval;
     private float nextBeatTime;
     private bool metronomeActive;
+
+    public event System.Action OnBeat; // Новое событие
 
     private void Awake()
     {
@@ -22,20 +23,28 @@ public class GlobalAudioManager : MonoBehaviour
         {
             Instance = this;
             DontDestroyOnLoad(gameObject);
+            Initialize();
         }
         else
         {
             Destroy(gameObject);
         }
-        
+    }
+
+    private void Initialize()
+    {
         CalculateBeatInterval();
+        nextBeatTime = Time.time + beatInterval;
     }
 
     private void Update()
     {
-        if (metronomeActive && Time.time >= nextBeatTime)
+        if (!metronomeActive) return;
+
+        if (Time.time >= nextBeatTime)
         {
             nextBeatTime += beatInterval;
+            OnBeat?.Invoke(); // Триггерим событие
         }
     }
 
@@ -52,6 +61,7 @@ public class GlobalAudioManager : MonoBehaviour
     {
         metronomeActive = true;
         nextBeatTime = Time.time + beatInterval;
+        Debug.Log($"Metronome started. BPM: {BPM}, Interval: {beatInterval}");
     }
 
     public void StopMetronome()

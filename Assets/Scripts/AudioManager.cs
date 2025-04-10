@@ -124,16 +124,28 @@ public class AudioManager : MonoBehaviour
     }
 
     public void PlayMetronomeSound(AudioClip clip, float volume = 1f, float pitch = 1f)
+{
+    if (clip == null)
     {
-        if (clip == null) return;
-
-        AudioSource source = GetAvailableAudioSource();
-        source.pitch = pitch;
-        source.volume = volume;
-        source.outputAudioMixerGroup = metronomeGroup;
-        source.PlayOneShot(clip);
-        StartCoroutine(ReturnToPoolAfterPlay(source, clip.length));
+        Debug.LogWarning("Metronome clip is null!");
+        return;
     }
+
+    if (metronomeGroup == null)
+    {
+        Debug.LogError("Metronome mixer group not assigned!");
+        return;
+    }
+
+    AudioSource source = GetAvailableAudioSource();
+    source.pitch = Mathf.Clamp(pitch, 0.5f, 2f);
+    source.volume = Mathf.Clamp(volume, 0f, 1f);
+    source.outputAudioMixerGroup = metronomeGroup;
+    source.PlayOneShot(clip);
+    StartCoroutine(ReturnToPoolAfterPlay(source, clip.length));
+    
+    Debug.Log($"Playing metronome sound: {clip.name}");
+}
 
     public void PlayInstrumentSound(AudioClip clip, float volume = 1f, float pitch = 1f)
     {

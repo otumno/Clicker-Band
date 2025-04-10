@@ -1,4 +1,3 @@
-// MetronomeManager.cs
 using UnityEngine;
 using System.Collections;
 
@@ -13,6 +12,11 @@ public class MetronomeManager : MonoBehaviour
 
     private void Start()
     {
+        InitializeMetronome();
+    }
+
+    private void InitializeMetronome()
+    {
         if (customPattern == null || customPattern.Length == 0)
         {
             Debug.LogError($"{name}: Metronome pattern not configured!", this);
@@ -25,6 +29,7 @@ public class MetronomeManager : MonoBehaviour
             return;
         }
 
+        GlobalAudioManager.Instance.StartMetronome();
         StartMetronome();
     }
 
@@ -43,8 +48,11 @@ public class MetronomeManager : MonoBehaviour
         
         while (isActive && GlobalAudioManager.Instance != null)
         {
-            PlayCurrentBeat();
-            currentPatternIndex = (currentPatternIndex + 1) % customPattern.Length;
+            if (currentPatternIndex < customPattern.Length)
+            {
+                PlayCurrentBeat();
+                currentPatternIndex = (currentPatternIndex + 1) % customPattern.Length;
+            }
             yield return new WaitForSeconds(60f / GlobalAudioManager.Instance.BPM);
         }
     }
@@ -56,6 +64,7 @@ public class MetronomeManager : MonoBehaviour
         var beat = customPattern[currentPatternIndex];
         if (beat == null || !beat.enabled || beat.sound == null) return;
 
+        Debug.Log($"Playing beat {currentPatternIndex} with clip: {beat.sound.name}");
         AudioManager.Instance?.PlayMetronomeSound(
             beat.sound,
             beat.volume,

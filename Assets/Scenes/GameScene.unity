@@ -1567,19 +1567,19 @@ MonoBehaviour:
   customPattern:
   - enabled: 1
     sound: {fileID: 8300000, guid: 52b65a127fe74ac40b6f4ec84c447fc8, type: 3}
-    pitchVariation: 0
+    pitchVariation: 1
     volume: 1
   - enabled: 1
     sound: {fileID: 8300000, guid: ff39adb70264ba84f8f9f81ec81adbb9, type: 3}
-    pitchVariation: 0
+    pitchVariation: 1
     volume: 1
   - enabled: 1
     sound: {fileID: 8300000, guid: ff39adb70264ba84f8f9f81ec81adbb9, type: 3}
-    pitchVariation: 0
+    pitchVariation: 1
     volume: 1
   - enabled: 1
     sound: {fileID: 8300000, guid: ff39adb70264ba84f8f9f81ec81adbb9, type: 3}
-    pitchVariation: 0
+    pitchVariation: 1
     volume: 1
   startDelay: 1
 --- !u!1 &1465067053
