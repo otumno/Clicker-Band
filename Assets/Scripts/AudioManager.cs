@@ -1,6 +1,8 @@
+// AudioManager.cs
 using UnityEngine;
 using UnityEngine.Audio;
 using System.Collections;
+using System.Collections.Generic;
 
 public class AudioManager : MonoBehaviour
 {
@@ -23,11 +25,11 @@ public class AudioManager : MonoBehaviour
 
     private float defaultGlobalVolume;
     private Coroutine currentGlobalFade;
-    private Coroutine currentLocalFade;
+    private readonly List<AudioSource> audioPool = new();
 
     private void Awake()
     {
-        if (Instance != null)
+        if (Instance != null && Instance != this)
         {
             Destroy(gameObject);
             return;
@@ -44,28 +46,17 @@ public class AudioManager : MonoBehaviour
         localMusicSource.outputAudioMixerGroup = localMusicGroup;
     }
 
-    #region Volume Control
+    #region Public Methods
     public void UpdateAllVolumes(AudioSettings settings)
     {
         SetMixerVolume("MasterVol", settings.masterVolume);
         SetMixerVolume("MusicVol", settings.musicVolume);
-        SetMixerVolume("GlobalMusicVol", settings.musicVolume);
-        SetMixerVolume("LocalMusicVol", settings.musicVolume);
         SetMixerVolume("SFXVol", settings.sfxVolume);
         SetMixerVolume("MenuSFXVol", settings.menuSFXVolume);
         SetMixerVolume("GameSFXVol", settings.gameSFXVolume);
         SetMixerVolume("MetronomeVol", settings.metronomeVolume);
     }
 
-    public void SetMixerVolume(string parameter, float volume)
-    {
-        if (mainMixer == null) return;
-        float dB = volume > 0.0001f ? 20f * Mathf.Log10(volume) : -80f;
-        mainMixer.SetFloat(parameter, dB);
-    }
-    #endregion
-
-    #region Global Music Control
     public void PlayGlobalMusic(AudioClip clip, float volume = 1f, bool fadeIn = false)
     {
         if (clip == null) return;
@@ -75,9 +66,30 @@ public class AudioManager : MonoBehaviour
         globalMusicSource.loop = true;
         globalMusicSource.Play();
 
-        if (fadeIn)
+        if (fadeIn) StartCoroutine(FadeGlobalMusic(volume, 1f));
+    }
+
+    public void PlayLocalMusic(AudioClip clip, float volume = 1f, bool fadeIn = false)
+    {
+        if (clip == null) return;
+
+        localMusicSource.clip = clip;
+        localMusicSource.volume = fadeIn ? 0f : volume;
+        localMusicSource.loop = true;
+        localMusicSource.Play();
+
+        if (fadeIn) StartCoroutine(FadeLocalMusic(volume, 1f));
+    }
+
+    public void StopLocalMusic(bool fadeOut = false)
+    {
+        if (fadeOut)
         {
-            SetGlobalMusicVolume(volume, 1f);
+            StartCoroutine(FadeLocalMusic(0f, 1f, true));
+        }
+        else
+        {
+            localMusicSource.Stop();
         }
     }
 
@@ -94,7 +106,50 @@ public class AudioManager : MonoBehaviour
         }
     }
 
-    public IEnumerator FadeGlobalMusic(float targetVolume, float fadeTime)
+    public void RestoreGlobalMusic(float fadeTime = 0f)
+    {
+        SetGlobalMusicVolume(defaultGlobalVolume, fadeTime);
+    }
+
+    public void PlaySFX(AudioClip clip, float volume = 1f, AudioCategory category = AudioCategory.SFX)
+    {
+        if (clip == null) return;
+
+        AudioSource source = GetAvailableAudioSource();
+        source.clip = clip;
+        source.volume = volume;
+        source.outputAudioMixerGroup = GetMixerGroup(category);
+        source.Play();
+        StartCoroutine(ReturnToPoolAfterPlay(source, clip.length));
+    }
+
+    public void PlayMetronomeSound(AudioClip clip, float volume = 1f, float pitch = 1f)
+    {
+        if (clip == null) return;
+
+        AudioSource source = GetAvailableAudioSource();
+        source.pitch = pitch;
+        source.volume = volume;
+        source.outputAudioMixerGroup = metronomeGroup;
+        source.PlayOneShot(clip);
+        StartCoroutine(ReturnToPoolAfterPlay(source, clip.length));
+    }
+
+    public void PlayInstrumentSound(AudioClip clip, float volume = 1f, float pitch = 1f)
+    {
+        if (clip == null) return;
+
+        AudioSource source = GetAvailableAudioSource();
+        source.pitch = pitch;
+        source.volume = volume;
+        source.outputAudioMixerGroup = gameSfxGroup;
+        source.PlayOneShot(clip);
+        StartCoroutine(ReturnToPoolAfterPlay(source, clip.length));
+    }
+    #endregion
+
+    #region Private Methods
+    private IEnumerator FadeGlobalMusic(float targetVolume, float fadeTime)
     {
         float startVolume = globalMusicSource.volume;
         float elapsedTime = 0f;
@@ -110,43 +165,6 @@ public class AudioManager : MonoBehaviour
         currentGlobalFade = null;
     }
 
-    public void RestoreGlobalMusic(float fadeTime = 0f)
-    {
-        SetGlobalMusicVolume(defaultGlobalVolume, fadeTime);
-    }
-    #endregion
-
-    #region Local Music Control
-    public void PlayLocalMusic(AudioClip clip, float volume = 1f, bool fadeIn = false)
-    {
-        if (clip == null) return;
-
-        if (currentLocalFade != null) StopCoroutine(currentLocalFade);
-
-        localMusicSource.clip = clip;
-        localMusicSource.volume = fadeIn ? 0f : volume;
-        localMusicSource.loop = true;
-        localMusicSource.Play();
-
-        if (fadeIn)
-        {
-            currentLocalFade = StartCoroutine(FadeLocalMusic(volume, 1f));
-        }
-    }
-
-    public void StopLocalMusic(bool fadeOut = false)
-    {
-        if (fadeOut)
-        {
-            if (currentLocalFade != null) StopCoroutine(currentLocalFade);
-            currentLocalFade = StartCoroutine(FadeLocalMusic(0f, 1f, true));
-        }
-        else
-        {
-            localMusicSource.Stop();
-        }
-    }
-
     private IEnumerator FadeLocalMusic(float targetVolume, float fadeTime, bool stopAfterFade = false)
     {
         float startVolume = localMusicSource.volume;
@@ -159,30 +177,32 @@ public class AudioManager : MonoBehaviour
             yield return null;
         }
 
-        localMusicSource.volume = targetVolume;
-
-        if (stopAfterFade && targetVolume <= 0f)
-        {
-            localMusicSource.Stop();
-        }
-
-        currentLocalFade = null;
+        if (stopAfterFade) localMusicSource.Stop();
     }
-    #endregion
 
-    #region SFX Methods
-    public void PlaySFX(AudioClip clip, float volume = 1f, AudioCategory category = AudioCategory.SFX)
+    private void SetMixerVolume(string parameter, float volume)
     {
-        if (clip == null) return;
+        if (mainMixer == null) return;
+        float dB = volume > 0.0001f ? 20f * Mathf.Log10(volume) : -80f;
+        mainMixer.SetFloat(parameter, dB);
+    }
 
-        GameObject tempGO = new GameObject("TempAudio_SFX");
-        AudioSource audioSource = tempGO.AddComponent<AudioSource>();
-        
-        audioSource.clip = clip;
-        audioSource.volume = volume;
-        audioSource.outputAudioMixerGroup = GetMixerGroup(category);
-        audioSource.Play();
-        Destroy(tempGO, clip.length);
+    private AudioSource GetAvailableAudioSource()
+    {
+        AudioSource source = audioPool.Find(a => !a.isPlaying);
+        if (source == null)
+        {
+            source = gameObject.AddComponent<AudioSource>();
+            audioPool.Add(source);
+        }
+        return source;
+    }
+
+    private IEnumerator ReturnToPoolAfterPlay(AudioSource source, float delay)
+    {
+        yield return new WaitForSeconds(delay);
+        source.Stop();
+        source.clip = null;
     }
 
     private AudioMixerGroup GetMixerGroup(AudioCategory category)
@@ -199,14 +219,4 @@ public class AudioManager : MonoBehaviour
         };
     }
     #endregion
-}
-
-public enum AudioCategory
-{
-    GlobalMusic,
-    LocalMusic,
-    SFX,
-    MenuSFX,
-    GameSFX,
-    Metronome
 }

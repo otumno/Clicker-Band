@@ -4,6 +4,7 @@ using UnityEngine.UI;
 public class AudioSettingsUI : MonoBehaviour
 {
     [SerializeField] private AudioSettings audioSettings;
+    [SerializeField] private GameBalance gameBalance;
 
     [Header("Sliders")]
     [SerializeField] private Slider masterSlider;
@@ -22,30 +23,42 @@ public class AudioSettingsUI : MonoBehaviour
 
     private void Start()
     {
-        // Инициализация слайдеров
+        InitializeSliders();
+        ApplyInitialSettings();
+    }
+
+    private void InitializeSliders()
+    {
+        // Загрузка сохраненных значений или использование значений по умолчанию
         masterSlider.value = PlayerPrefs.GetFloat(MASTER_KEY, audioSettings.masterVolume);
         musicSlider.value = PlayerPrefs.GetFloat(MUSIC_KEY, audioSettings.musicVolume);
-        sfxSlider.value = PlayerPrefs.GetFloat(SFX_KEY, audioSettings.sfxVolume);
+        sfxSlider.value = PlayerPrefs.GetFloat(SFX_KEY, gameBalance.defaultSFXVolume);
         menuSfxSlider.value = PlayerPrefs.GetFloat(MENU_SFX_KEY, audioSettings.menuSFXVolume);
         gameSfxSlider.value = PlayerPrefs.GetFloat(GAME_SFX_KEY, audioSettings.gameSFXVolume);
-        metronomeSlider.value = PlayerPrefs.GetFloat(METRONOME_KEY, audioSettings.metronomeVolume);
+        metronomeSlider.value = PlayerPrefs.GetFloat(METRONOME_KEY, gameBalance.defaultMetronomeVolume);
 
-        // Подписка на события
+        // Подписка на изменения
         masterSlider.onValueChanged.AddListener(UpdateMasterVolume);
         musicSlider.onValueChanged.AddListener(UpdateMusicVolume);
         sfxSlider.onValueChanged.AddListener(UpdateSFXVolume);
         menuSfxSlider.onValueChanged.AddListener(UpdateMenuSFXVolume);
         gameSfxSlider.onValueChanged.AddListener(UpdateGameSFXVolume);
         metronomeSlider.onValueChanged.AddListener(UpdateMetronomeVolume);
+    }
 
-        // Применение начальных значений
+    private void ApplyInitialSettings()
+    {
+        // Применение начальных настроек
+        audioSettings.masterVolume = masterSlider.value;
+        audioSettings.musicVolume = musicSlider.value;
+        audioSettings.sfxVolume = sfxSlider.value;
+        audioSettings.menuSFXVolume = menuSfxSlider.value;
+        audioSettings.gameSFXVolume = gameSfxSlider.value;
+        audioSettings.metronomeVolume = metronomeSlider.value;
+
         if (AudioManager.Instance != null)
         {
             AudioManager.Instance.UpdateAllVolumes(audioSettings);
-        }
-        else
-        {
-            Debug.LogWarning("AudioManager instance not found!");
         }
     }
 

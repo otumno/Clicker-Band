@@ -1669,6 +1669,7 @@ MonoBehaviour:
     menuSFXVolume: 1
     gameSFXVolume: 1
     metronomeVolume: 1
+  gameBalance: {fileID: 11400000, guid: 8dbb14889b0ccb34a92531b0de43a1e5, type: 2}
   masterSlider: {fileID: 1680942653}
   musicSlider: {fileID: 1041344503}
   sfxSlider: {fileID: 1416514956}

@@ -1,3 +1,4 @@
+// AudioSettings.cs
 using UnityEngine;
 
 [System.Serializable]
