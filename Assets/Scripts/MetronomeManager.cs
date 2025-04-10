@@ -3,34 +3,26 @@ using System.Collections;
 
 public class MetronomeManager : MonoBehaviour
 {
+    public static MetronomeManager Instance { get; private set; }
+
     [SerializeField] private MetronomePattern[] customPattern;
-    [SerializeField] private float startDelay = 1f;
+    [SerializeField] private float startDelay = 0.1f;
     
     private int currentPatternIndex;
     private bool isActive;
     private Coroutine metronomeRoutine;
 
-    private void Start()
+    private void Awake()
     {
-        InitializeMetronome();
-    }
-
-    private void InitializeMetronome()
-    {
-        if (customPattern == null || customPattern.Length == 0)
+        if(Instance == null)
         {
-            Debug.LogError($"{name}: Metronome pattern not configured!", this);
-            return;
+            Instance = this;
+            DontDestroyOnLoad(gameObject);
         }
-
-        if (GlobalAudioManager.Instance == null)
+        else
         {
-            Debug.LogError($"{name}: GlobalAudioManager not found!", this);
-            return;
+            Destroy(gameObject);
         }
-
-        GlobalAudioManager.Instance.StartMetronome();
-        StartMetronome();
     }
 
     public void StartMetronome()
@@ -64,7 +56,6 @@ public class MetronomeManager : MonoBehaviour
         var beat = customPattern[currentPatternIndex];
         if (beat == null || !beat.enabled || beat.sound == null) return;
 
-        Debug.Log($"Playing beat {currentPatternIndex} with clip: {beat.sound.name}");
         AudioManager.Instance?.PlayMetronomeSound(
             beat.sound,
             beat.volume,
@@ -72,7 +63,7 @@ public class MetronomeManager : MonoBehaviour
         );
     }
 
-    public void StopMetronome()
+    public void StopMetronomeOnMenu()
     {
         if (!isActive) return;
         
@@ -81,5 +72,8 @@ public class MetronomeManager : MonoBehaviour
         {
             StopCoroutine(metronomeRoutine);
         }
+        GlobalAudioManager.Instance.StopMetronome();
+        GlobalAudioManager.Instance.ResetFirstClick();
+        Destroy(gameObject);
     }
 }

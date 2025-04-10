@@ -1,4 +1,3 @@
-// InstrumentController.cs
 using UnityEngine;
 
 public class InstrumentController : MonoBehaviour
@@ -8,16 +7,10 @@ public class InstrumentController : MonoBehaviour
     
     private int currentBeatIndex;
 
-    private void OnValidate()
-    {
-        if (beatSounds == null || beatSounds.Length == 0)
-        {
-            Debug.LogWarning($"{name}: Instrument beats not configured!", this);
-        }
-    }
-
     public void OnInstrumentClicked()
     {
+        GlobalAudioManager.Instance?.HandleFirstClick();
+        
         if (!CheckDependencies()) return;
 
         bool isPerfectHit = GlobalAudioManager.Instance.IsBeatInWindow(hitWindow);

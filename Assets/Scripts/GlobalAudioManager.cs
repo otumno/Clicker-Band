@@ -14,8 +14,7 @@ public class GlobalAudioManager : MonoBehaviour
     private float beatInterval;
     private float nextBeatTime;
     private bool metronomeActive;
-
-    public event System.Action OnBeat; // Новое событие
+    private bool isFirstClick = true;
 
     private void Awake()
     {
@@ -37,6 +36,16 @@ public class GlobalAudioManager : MonoBehaviour
         nextBeatTime = Time.time + beatInterval;
     }
 
+    public void HandleFirstClick()
+    {
+        if(isFirstClick)
+        {
+            isFirstClick = false;
+            StartMetronome();
+            MetronomeManager.Instance?.StartMetronome();
+        }
+    }
+
     private void Update()
     {
         if (!metronomeActive) return;
@@ -44,7 +53,6 @@ public class GlobalAudioManager : MonoBehaviour
         if (Time.time >= nextBeatTime)
         {
             nextBeatTime += beatInterval;
-            OnBeat?.Invoke(); // Триггерим событие
         }
     }
 
@@ -61,11 +69,13 @@ public class GlobalAudioManager : MonoBehaviour
     {
         metronomeActive = true;
         nextBeatTime = Time.time + beatInterval;
-        Debug.Log($"Metronome started. BPM: {BPM}, Interval: {beatInterval}");
+        Debug.Log("Metronome started on first click");
     }
 
     public void StopMetronome()
     {
         metronomeActive = false;
     }
+
+    public void ResetFirstClick() => isFirstClick = true;
 }
