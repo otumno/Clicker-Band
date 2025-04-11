@@ -16,7 +16,8 @@ public class LevelMusic : MonoBehaviour
     {
         if (controlGlobalMusic && AudioManager.Instance != null)
         {
-            yield return AudioManager.Instance.FadeGlobalMusic(0.1f, globalFadeOutTime);
+            AudioManager.Instance.SetGlobalMusicVolume(0.1f, globalFadeOutTime);
+            yield return new WaitForSeconds(globalFadeOutTime);
         }
 
         if (AudioManager.Instance != null)

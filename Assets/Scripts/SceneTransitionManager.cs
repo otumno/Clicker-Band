@@ -1,7 +1,7 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
-using System.Collections; // Добавлено для IEnumerator
+using System.Collections;
 
 public class SceneTransitionManager : MonoBehaviour
 {
@@ -30,16 +30,29 @@ public class SceneTransitionManager : MonoBehaviour
         
         yield return StartCoroutine(FadeOut());
 
-        if (action == TransitionAction.LoadScene)
+        // Добавляем остановку метронома только при переходе в меню
+        if (action == TransitionAction.LoadScene && sceneToLoad == "Menu")
         {
-            SceneManager.LoadScene(sceneToLoad);
+            MetronomeManager.Instance?.StopMetronomeOnMenu();
         }
-        else if (action == TransitionAction.ExitGame)
+
+        ExecuteTransitionAction();
+    }
+
+    private void ExecuteTransitionAction()
+    {
+        switch (action)
         {
-            Application.Quit();
-            #if UNITY_EDITOR
-            UnityEditor.EditorApplication.isPlaying = false;
-            #endif
+            case TransitionAction.LoadScene:
+                SceneManager.LoadScene(sceneToLoad);
+                break;
+            
+            case TransitionAction.ExitGame:
+                Application.Quit();
+                #if UNITY_EDITOR
+                UnityEditor.EditorApplication.isPlaying = false;
+                #endif
+                break;
         }
     }
 
