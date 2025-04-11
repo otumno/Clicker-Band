@@ -1,5 +1,6 @@
 using UnityEngine;
-using System.Collections;
+using System.Collections; // Добавлено для IEnumerator
+using UnityEngine.SceneManagement; // Добавьте эту строку
 
 public class MetronomeManager : MonoBehaviour
 {
@@ -14,7 +15,7 @@ public class MetronomeManager : MonoBehaviour
 
     private void Awake()
     {
-        if(Instance == null)
+        if (Instance == null)
         {
             Instance = this;
             DontDestroyOnLoad(gameObject);
@@ -23,6 +24,22 @@ public class MetronomeManager : MonoBehaviour
         {
             Destroy(gameObject);
         }
+    }
+
+    private void OnEnable()
+    {
+        SceneManager.sceneLoaded += OnSceneLoaded; // Подписываемся на событие загрузки сцены
+    }
+
+    private void OnDisable()
+    {
+        SceneManager.sceneLoaded -= OnSceneLoaded; // Отписываемся от события
+        StopMetronome(); // Останавливаем метроном
+    }
+
+    private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+    {
+        StopMetronome(); // Останавливаем метроном при загрузке новой сцены
     }
 
     public void StartMetronome()
@@ -63,7 +80,7 @@ public class MetronomeManager : MonoBehaviour
         );
     }
 
-    public void StopMetronomeOnMenu()
+    public void StopMetronome()
     {
         if (!isActive) return;
         
@@ -73,7 +90,16 @@ public class MetronomeManager : MonoBehaviour
             StopCoroutine(metronomeRoutine);
         }
         GlobalAudioManager.Instance.StopMetronome();
-        GlobalAudioManager.Instance.ResetFirstClick();
-        Destroy(gameObject);
+        GlobalAudioManager.Instance.ResetFirstClick(); // Сброс первого клика
+    }
+
+    private void OnDestroy()
+    {
+        StopMetronome(); // Останавливаем метроном при уничтожении объекта
+    }
+
+    public void StopMetronomeOnMenu()
+    {
+        StopMetronome(); // Используем новый метод для остановки метронома
     }
 }

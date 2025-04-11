@@ -1141,6 +1141,7 @@ MonoBehaviour:
   - correctSound: {fileID: 8300000, guid: 6bbcb3e9e6209e748b22456bb2af2466, type: 3}
     missSound: {fileID: 8300000, guid: 4ceedf94bea66e143b9ce8e979b0de83, type: 3}
     volume: 1
+  firstPressSound: {fileID: 8300000, guid: 6bbcb3e9e6209e748b22456bb2af2466, type: 3}
   hitWindow: 1
 --- !u!1 &969013167
 GameObject:

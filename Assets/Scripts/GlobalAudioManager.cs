@@ -1,4 +1,5 @@
-using UnityEngine;
+using UnityEngine; // Добавьте эту строку
+using System.Collections; // Добавьте эту строку, если используете корутины
 
 public class GlobalAudioManager : MonoBehaviour
 {
@@ -53,6 +54,7 @@ public class GlobalAudioManager : MonoBehaviour
         if (Time.time >= nextBeatTime)
         {
             nextBeatTime += beatInterval;
+            // Здесь вы можете добавить логику для воспроизведения звука метронома
         }
     }
 
@@ -62,7 +64,7 @@ public class GlobalAudioManager : MonoBehaviour
     {
         float window = customWindow > 0 ? customWindow : (preBeatWindow + postBeatWindow) / 1000f;
         float currentTime = Time.time;
-        return currentTime >= nextBeatTime - window/2 && currentTime <= nextBeatTime + window/2;
+        return currentTime >= nextBeatTime - window / 2 && currentTime <= nextBeatTime + window / 2;
     }
 
     public void StartMetronome()
